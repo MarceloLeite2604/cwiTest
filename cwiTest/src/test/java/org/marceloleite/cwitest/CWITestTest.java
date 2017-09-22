@@ -1,4 +1,4 @@
-package org.marceloleite.cwiTest;
+package org.marceloleite.cwitest;
 
 import static org.junit.Assert.*;
 
