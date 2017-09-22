@@ -102,13 +102,16 @@ public class CWITest {
 					"The amount informed on \"value\" parameter must be equal or greater than zero.");
 		}
 
+		if (null == quotation) {
+			throw new InvalidParameterException("Quotation date cannot be null.");
+		}
+
 		Date quotationDate;
 		try {
 			quotationDate = new SimpleDateFormat("dd/MM/yyyy").parse(quotation);
 		} catch (ParseException parseException) {
-			throw new RuntimeException(
-					"Could not parse quotation date \"" + quotation + "\". Is it on \"dd/MM/yyyy format?",
-					parseException);
+			throw new InvalidParameterException(
+					"Could not parse quotation date \"" + quotation + "\". Is it on \"dd/MM/yyyy\" format?");
 		}
 
 		Calendar calendar = Calendar.getInstance();
