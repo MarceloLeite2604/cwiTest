@@ -49,22 +49,28 @@ public class CWITest {
 	private static final String CSV_SEPARATION_CHARACTER = ";";
 
 	/**
-	 * Entry method used for testing purposes.
+	 * The class entry method (used for testing purposes).
 	 * 
 	 * @param args
+	 *            Not used.
 	 */
 	public static void main(String[] args) {
 		BigDecimal returnValue = null;
+		String from = "USD";
+		String to = "EUR";
+		String quotation = "20/11/2014";
+		Number value = 100.00;
 
-		CWITest cwiTest = new CWITest();
 		try {
-			returnValue = cwiTest.currencyQuotation("USD", "EUR", 100.00, "20/11/2014");
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			returnValue = new CWITest().currencyQuotation(from, to, value, quotation);
+		} catch (IOException ioException) {
+			System.err.println("Could not retrieve the currency quotation for " + value + " " + from + " to " + to
+					+ " on " + quotation + ".");
+			ioException.printStackTrace();
 		}
 
-		System.out.println(returnValue);
+		System.out.println(
+				"On " + quotation + ", " + value + " " + from + " is equivalent to " + returnValue + " " + to + ".");
 	}
 
 	/**
@@ -79,10 +85,12 @@ public class CWITest {
 	 *            The amount of base currency to convert.
 	 * @param quotation
 	 *            The quotation date on "dd/MM/yyyy" format.
-	 * @return TODO: Once the function is done, write this.
+	 * @return Returns the equivalent amount of the the base currency defined on
+	 *         "value" parameter on the quote currency on the specified date.
 	 * @throws IOException
-	 *             When the method cannot retrieve Brazilian central bank quotation
-	 *             CSV file.
+	 *             When the method cannot retrieve the Brazilian central bank
+	 *             quotation CSV file or a value read on from the CSV file could not
+	 *             be parsed.
 	 */
 	public BigDecimal currencyQuotation(String from, String to, Number value, String quotation) throws IOException {
 
@@ -134,8 +142,13 @@ public class CWITest {
 		calendar.add(Calendar.DAY_OF_MONTH, -daysToSubtract);
 		quotationDate = calendar.getTime();
 
+		/* Retrieves the CSV file for the quotation date. */
 		File csvFile = retrieveQuotationCsvFile(quotationDate);
 
+		/*
+		 * Creates a hash map with the currency exchanging information based on the csv
+		 * file retrieved.
+		 */
 		Map<String, CurrencyExchangingInformation> currencyExchangingInformationMap;
 		currencyExchangingInformationMap = createExchangingInformationMap(csvFile);
 
@@ -151,6 +164,7 @@ public class CWITest {
 			throw new RuntimeException("Could not find exchanging rates for \"" + to + "\" currency.");
 		}
 
+		/* Calculates the equivalent amount on the quote currency. */
 		double exchangeRate = (currencyExchangingInformationFrom.getBuyingRate()
 				/ currencyExchangingInformationTo.getBuyingRate());
 		double convertedValue = Math.round((value.doubleValue() * exchangeRate) * 100.0) / 100.0;
@@ -160,7 +174,7 @@ public class CWITest {
 	}
 
 	/**
-	 * Retrieves the Real quotation CSV file of a specific date from brazilian
+	 * Retrieves the Real quotation CSV file of a specific date from Brazilian
 	 * central bank.
 	 * 
 	 * @param quotationDate
@@ -255,6 +269,8 @@ public class CWITest {
 	 *            will be retrieved.
 	 * 
 	 * @return A {@link HashMap} with the currencies' exchanging information
+	 * @throws IOException
+	 *             When the values retrieved on the CSV file could not be parsed.
 	 */
 	private final Map<String, CurrencyExchangingInformation> createExchangingInformationMap(File csvFile)
 			throws IOException {
@@ -281,8 +297,8 @@ public class CWITest {
 		CurrencyExchangingInformation currencyExchangingInformation;
 
 		/*
-		 * Since we're reading values acquired from a brazilian bank, the number parser
-		 * must read then on the brazilian format (i. e. the decimal separator character
+		 * Since we're reading values acquired from a Brazilian bank, the number parser
+		 * must read then on the Brazilian format (i. e. the decimal separator character
 		 * is comma and the grouping separator character is dot).
 		 */
 		DecimalFormatSymbols decimalFormatSymbols = new DecimalFormatSymbols();

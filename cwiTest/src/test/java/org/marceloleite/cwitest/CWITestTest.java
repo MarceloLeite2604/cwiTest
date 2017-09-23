@@ -10,10 +10,20 @@ import java.util.Random;
 import org.junit.Test;
 import org.marceloleite.cwitest.CWITest;
 
+/**
+ * Test cases created to check the {@link CWITest} class.
+ * 
+ * @author Marcelo Leite
+ *
+ */
 public class CWITestTest {
 
+	/**
+	 * Tests the {@link CWITest#currencyQuotation} method based on the example shown
+	 * on test description.
+	 */
 	@Test
-	public void testCurrencyQuotationExampleSuccess() {
+	public void testCurrencyQuotationExample() {
 		BigDecimal[] expected = new BigDecimal[1];
 		expected[0] = new BigDecimal("79.69");
 		BigDecimal[] results = new BigDecimal[1];
@@ -25,23 +35,32 @@ public class CWITestTest {
 		assertArrayEquals(expected, results);
 	}
 
+	/**
+	 * Tests if the {@link CWITest#currencyQuotation} result is rounded with two
+	 * decimal places.
+	 */
 	@Test
-	public void testCurrencyQuotationResultWithTwoDecimalPlacesSuccess() {
+	public void testCurrencyQuotationResultWithTwoDecimalPlaces() {
 		/* Max value used to avoid an exponential representation of the result. */
-		final double MAX_VALUE = 100000;
-		
+		final double maxValue = 100000;
+		final String twoDecimalsRegex = "^\\d+\\.\\d{2}$";
+
 		BigDecimal returnedValue = null;
-		Number randomAmount = ((new Random().nextDouble() ) * MAX_VALUE);
+		Number randomAmount = ((new Random().nextDouble()) * maxValue);
 		try {
 			returnedValue = new CWITest().currencyQuotation("USD", "EUR", randomAmount, "20/11/2014");
 		} catch (IOException ioException) {
 			fail("IOException thrown: " + ioException.getMessage());
 		}
 		String returnedValueString = returnedValue.toString();
-		assertTrue(returnedValueString.matches("^\\d+\\.\\d{2}$"));
-
+		assertTrue(returnedValueString.matches(twoDecimalsRegex));
 	}
 
+	/**
+	 * Tests if the execution of the {@link CWITest#currencyQuotation} method with
+	 * an empty value on "from" parameter throws an
+	 * {@link InvalidParameterException}.
+	 */
 	@Test(expected = InvalidParameterException.class)
 	public void testCurrencyQuotationEmptyFromInvalidParameterException() {
 		try {
@@ -52,6 +71,10 @@ public class CWITestTest {
 		fail("An InvalidParameterException must be thrown.");
 	}
 
+	/**
+	 * Tests if the execution of the {@link CWITest#currencyQuotation} method with a
+	 * null value on "from" parameter throws an {@link InvalidParameterException}.
+	 */
 	@Test(expected = InvalidParameterException.class)
 	public void testCurrencyQuotationNullFromInvalidParameterException() {
 		try {
@@ -62,6 +85,24 @@ public class CWITestTest {
 		fail("An InvalidParameterException must be thrown.");
 	}
 
+	/**
+	 * Tests if the execution of the {@link CWITest#currencyQuotation} method with
+	 * an invalid value on "from" parameter throws an {@link RuntimeException}.
+	 */
+	@Test(expected = RuntimeException.class)
+	public void testCurrencyQuotationInvalidFromRuntimeException() {
+		try {
+			new CWITest().currencyQuotation("???", "EUR", 100.00, "20/09/2017");
+		} catch (IOException ioException) {
+			fail("IOException thrown: " + ioException.getMessage());
+		}
+		fail("An RuntimeException must be thrown.");
+	}
+
+	/**
+	 * Tests if the execution of the {@link CWITest#currencyQuotation} method with
+	 * an empty value on "to" parameter throws an {@link InvalidParameterException}.
+	 */
 	@Test(expected = InvalidParameterException.class)
 	public void testCurrencyQuotationEmptyToInvalidParameterException() {
 		try {
@@ -72,6 +113,10 @@ public class CWITestTest {
 		fail("An InvalidParameterException must be thrown.");
 	}
 
+	/**
+	 * Tests if the execution of the {@link CWITest#currencyQuotation} method with a
+	 * null value on "to" parameter throws an {@link InvalidParameterException}.
+	 */
 	@Test(expected = InvalidParameterException.class)
 	public void testCurrencyQuotationNullToInvalidParameterException() {
 		try {
@@ -82,6 +127,25 @@ public class CWITestTest {
 		fail("An InvalidParameterException must be thrown.");
 	}
 
+	/**
+	 * Tests if the execution of the {@link CWITest#currencyQuotation} method with
+	 * an invalid value on "to" parameter throws an {@link RuntimeException}.
+	 */
+	@Test(expected = RuntimeException.class)
+	public void testCurrencyQuotationInvalidToRuntimeException() {
+		try {
+			new CWITest().currencyQuotation("USD", ":::", 100.00, "20/09/2017");
+		} catch (IOException ioException) {
+			fail("IOException thrown: " + ioException.getMessage());
+		}
+		fail("An RuntimeException must be thrown.");
+	}
+
+	/**
+	 * Tests if the execution of the {@link CWITest#currencyQuotation} method
+	 * passing a value smaller than zero on "value" parameter throws an
+	 * {@link InvalidParameterException}. exception.
+	 */
 	@Test(expected = InvalidParameterException.class)
 	public void testCurrencyQuotationValueSmallerThanZeroInvalidParameterException() {
 		Number randomNegativeValue = ((new Random().nextDouble() - 1) * Double.MAX_VALUE);
@@ -93,8 +157,13 @@ public class CWITestTest {
 		fail("An InvalidParameterException must be thrown.");
 	}
 
+	/**
+	 * Tests if the execution of the {@link CWITest#currencyQuotation} method
+	 * passing a null value on "quotation" parameter throws an
+	 * {@link InvalidParameterException}.
+	 */
 	@Test(expected = InvalidParameterException.class)
-	public void testCurrencyQuotationInvalidQuotationDateNullInvalidParameterException() {
+	public void testCurrencyQuotationNullQuotationDateInvalidParameterException() {
 		try {
 			new CWITest().currencyQuotation("USD", "EUR", 100.00, null);
 		} catch (IOException ioException) {
@@ -103,6 +172,11 @@ public class CWITestTest {
 		fail("An InvalidParameterException must be thrown.");
 	}
 
+	/**
+	 * Tests if the execution of the{@link CWITest#currencyQuotation} method passing
+	 * an invalid date format on "quotation" parameter throws an
+	 * {@link InvalidParameterException}. exception.
+	 */
 	@Test(expected = InvalidParameterException.class)
 	public void testCurrencyQuotationInvalidQuotationDateFormatInvalidParameterException() {
 		try {
@@ -113,8 +187,13 @@ public class CWITestTest {
 		fail("An InvalidParameterException must be thrown.");
 	}
 
+	/**
+	 * Tests if the execution of the "currencyQuotation" method passing an
+	 * unavailable quotation date on "quotation" parameter throws an
+	 * {@link IOException}.
+	 */
 	@Test(expected = IOException.class)
 	public void testCurrencyQuotationQuotationDateNotAvailableIOException() throws IOException {
-		new CWITest().currencyQuotation("USD", "EUR", 100.00, "01/01/1800");
+		new CWITest().currencyQuotation("USD", "EUR", 100.00, "01/02/1800");
 	}
 }

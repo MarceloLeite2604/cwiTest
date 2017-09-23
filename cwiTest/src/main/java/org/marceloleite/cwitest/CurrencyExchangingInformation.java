@@ -3,7 +3,7 @@ package org.marceloleite.cwitest;
 import java.util.Date;
 
 /**
- * Exchanging rates information from brazilian Real to another currency on a
+ * Exchanging rates information from Brazilian Real to another currency on a
  * given date.
  * 
  * @author Marcelo Leite
@@ -42,15 +42,35 @@ public class CurrencyExchangingInformation {
 	private double sellingRate;
 
 	/**
-	 * The currency's buying purchasing power parity
+	 * The currency's buying purchasing power parity.
 	 */
 	private double buyingPpp;
 
 	/**
-	 * The currency's selling purchasing power parity
+	 * The currency's selling purchasing power parity.
 	 */
 	private double sellingPpp;
 
+	/**
+	 * Creates a new {@link CurrencyExchangingInformation} object.
+	 * 
+	 * @param exchangingDate
+	 *            The exchanging date.
+	 * @param currencyCode
+	 *            The currency identification code.
+	 * @param type
+	 *            The currency type.
+	 * @param currencyAbbreviation
+	 *            The currency abbreviation.
+	 * @param buyingRate
+	 *            The currency's buying rate.
+	 * @param sellingRate
+	 *            The currency's selling rate.
+	 * @param buyingPpp
+	 *            The currency's buying purchasing power parity
+	 * @param sellingPpp
+	 *            The currency's selling purchasing power parity.
+	 */
 	public CurrencyExchangingInformation(Date exchangingDate, String currencyCode, String type,
 			String currencyAbbreviation, double buyingRate, double sellingRate, double buyingPpp, double sellingPpp) {
 		this.exchangingDate = exchangingDate;
